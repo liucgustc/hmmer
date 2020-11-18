@@ -1,0 +1,13 @@
+hmmbuild PF00722 PF00722_seed.txt
+hmmsearch   -o PF15886_pro.out PF15886 /data1/wulab234/yuwq/WBPH/annotation/TransDecoder_TGS/transcript.noLncRNA.fa.transdecoder.pep
+/home/opt/biosoft/cmfinder-0.4.1.18/bin/clustalw
+hmmbuild  GNBP.gene GNBP/gene/GNBP.res
+nhmmer  -o GNBP.hmm.out GNBP.gene genome.fa
+
+
+formatdb -i Protein.fa -p T -t pro
+tblastn -query /data2/lab234/liucg/planthopper/Blast/protein/GNBP/GNBP -db genome.fa -evalue 1e-5 -max_target_seqs 10 -outfmt 6 -out GNBP_genome.csv
+awk '{if($9<$10) print $2"\t"$9"\t"$10"\t"$1}' GNBP_genome.csv > postive.bed
+awk '{if($9>$10) print $2"\t"$10"\t"$9"\t"$1}' GNBP_genome.csv > negative.bed
+sortBed -i negative.bed > sort_n.bed
+sortBed -i postive.bed > sort_p.bed
